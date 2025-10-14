@@ -10,3 +10,7 @@ def test_piece() -> None:
 def test_piece_str() -> None:
     piece = Piece(True, False, False, True)
     assert str(piece) == "Tall, Light, Hollow, Square"
+
+def test_piece_emoji_print() -> None:
+    piece = Piece(True, True, True, True)
+    assert piece.emoji_print()

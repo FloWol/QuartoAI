@@ -10,7 +10,7 @@ class Game:
         self.player1: Player = Player("X", "Light")
         self.player2: Player = Player("O", "Dark")
 
-        self.init_pieces()
+        self._init_pieces()
 
         #TODO make tuple for easier programming access
         self.trait_map = {
@@ -25,21 +25,21 @@ class Game:
         }
 
 
-    def generate_pieces(self):
+    def _generate_pieces(self):
         attributes = [True, False]
         self.all_pieces = [Piece(tall, dark, solid, square) for tall, dark, solid, square in product(attributes, repeat=4)]
 
 
-    def dark_pieces(self) -> None:
+    def _dark_pieces(self) -> None:
         self.dark_set = [piece for piece in self.all_pieces if piece.dark == True]
 
-    def light_pieces(self) -> None:
+    def _light_pieces(self) -> None:
         self.light_set = [piece for piece in self.all_pieces if piece.dark == False]
 
-    def init_pieces(self) -> None:
-        self.generate_pieces()
-        self.dark_pieces()
-        self.light_pieces()
+    def _init_pieces(self) -> None:
+        self._generate_pieces()
+        self._dark_pieces()
+        self._light_pieces()
 
     def parse_piece(self, piece: Piece):
         pass
@@ -48,26 +48,58 @@ class Game:
         pass
 
     # TODO change logic: print list of pieces and let the user input a number!!!
-    def select_piece(self, pieces: list[Piece]) -> Piece:
+    def _select_piece(self, pieces: list[Piece]) -> Piece:
         # check if piece is valid try, add the color there
         #Select pieces from list
         print("Available pieces:")
-        for piece in pieces:
+        for index, piece in enumerate(pieces):
+            print(f"{index}.")
             piece.emoji_print()
-        piece_string = input("Please enter a piece [e.g. T Sh So]: ")
-        piece_attr = piece_string.strip().split()
-        #for attr in piece_attr:
 
+        while True:
+            user_input = input("Enter a one-digit number (0–7): ")
+            if user_input in "01234567":
+                piece_number = int(user_input)
+                print(f"You entered: {piece_number}")
+                break
+            else:
+                print("Invalid input. Try again.")
 
-        #piece_string.split()
+        return pieces[piece_number]
 
-
-        pass
+    @staticmethod
+    def letter_to_int(letter):
+        return ord(letter.upper()) - ord('A')
 
     def place_piece(self, piece: Piece) -> None:
         # check if move is legal, if not report to player try again
         # Check if winning
-        pass
+        #TODO make this its own function and place it below in the clause
+        place = input("Where do you want to place the piece? e.g. [A1]")
+        col = place[0]
+        col_int = self.letter_to_int(col)
+        row = int(place[1])
+
+        placed = False
+        while not placed:
+            if self.board[row, col_int] is not None:
+                self.board[row, col] = piece
+                placed = False
+            else:
+                print("Invalid input. Try again.")
+
+        # maybe check first if it is in the dark set
+        if piece.dark:
+            self.dark_set.remove(piece)
+        else:
+            self.light_set.remove(piece)
+
+
+
+
+
+        #Also delete piece from list
+
 
     def player_switch(self, current_player: Player) -> Player:
         if current_player == self.player1:
@@ -78,6 +110,7 @@ class Game:
 
     def turn(self, player: Player) -> None:
         print(f"{player.player_name}'s turn")
+        print(self.board)
 
         # select the correct player's set
         if player == self.player1:
@@ -87,8 +120,8 @@ class Game:
         else:
             raise ValueError(f"Player {player.player_name} has no pieces") #this should never happen
         try:
-            select_piece: Piece = self.select_piece(pieces)
-            self.place_piece(select_piece)
+            selected_piece: Piece = self._select_piece(pieces)
+            self.place_piece(selected_piece)
 
         except ValueError:
                 print("please enter a valid piece")

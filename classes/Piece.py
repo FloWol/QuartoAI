@@ -12,9 +12,10 @@ class Piece:
         f"{'Square' if self.square else 'Round'}"
 
     def emoji_print(self) -> str:
-        return f"{'⬛' if self.square and self.dark else '⬜️' if self.square else '⚫' if self.dark else '⚪'}" \
+        return print(f"{'⬛' if self.square and self.dark else '⬜️' if self.square else '⚫' if self.dark else '⚪'}" \
                 f"{'T' if self.tall else 'S'}" \
-                f"{'Sol' if self.solid else 'Hol'}"
+                f"{'Sol' if self.solid else 'Hol'}")
+
 
 
 
