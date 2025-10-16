@@ -6,15 +6,14 @@ class Piece:
         self.square: bool = square
 
     def __str__(self) -> str:
-        return f"{'Tall' if self.tall else 'Short'}, " \
-        f"{'Dark' if self.dark else 'Light'}, " \
-        f"{'Solid' if self.solid else 'Hollow'}, " \
-        f"{'Square' if self.square else 'Round'}"
+        return f"{'⬛' if self.square and self.dark else '⬜️' if self.square else '⚫' if self.dark else '⚪'}" \
+                f"{'T' if self.tall else 'S'}" \
+                f"{'Sol' if self.solid else 'Hol'}"
 
     def emoji_print(self) -> str:
-        return print(f"{'⬛' if self.square and self.dark else '⬜️' if self.square else '⚫' if self.dark else '⚪'}" \
+        return f"{'⬛' if self.square and self.dark else '⬜️' if self.square else '⚫' if self.dark else '⚪'}" \
                 f"{'T' if self.tall else 'S'}" \
-                f"{'Sol' if self.solid else 'Hol'}")
+                f"{'Sol' if self.solid else 'Hol'}"
 
 
 

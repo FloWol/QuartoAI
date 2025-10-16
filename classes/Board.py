@@ -6,11 +6,12 @@ class Board:
         self.board_array = np.full((4, 4), None, dtype=object)
 
 
-    def __getitem__(self, indces):
-        row, col = indces
+    def __getitem__(self, indices):
+        row, col = indices
         return self.board_array[row, col]
-    def __setitem__(self, indces, value):
-        row, col = indces
+
+    def __setitem__(self, indices, value):
+        row, col = indices
         self.board_array[row, col] = value
 
 
