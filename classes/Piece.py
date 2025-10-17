@@ -5,6 +5,9 @@ class Piece:
         self.solid: bool = solid
         self.square: bool = square
 
+    def get_properties(self):
+        return [self.tall, self.dark, self.solid, self.square]
+
     def __str__(self) -> str:
         return f"{'⬛' if self.square and self.dark else '⬜️' if self.square else '⚫' if self.dark else '⚪'}" \
                 f"{'T' if self.tall else 'S'}" \

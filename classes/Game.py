@@ -2,6 +2,7 @@ from itertools import product
 from classes.Board import Board
 from classes.Piece import Piece
 from classes.Player import Player
+import numpy as np
 
 
 class Game:
@@ -11,18 +12,6 @@ class Game:
         self.player2: Player = Player("O", "Dark")
 
         self._init_pieces()
-
-        #TODO make tuple for easier programming access
-        self.trait_map = {
-            'T': True,
-            'Sh': False,
-            'D': True,
-            'L': False,
-            'So': True,
-            'H': False,
-            'Sq': True,
-            'R': False,
-        }
 
 
     def _generate_pieces(self):
@@ -41,13 +30,7 @@ class Game:
         self._dark_pieces()
         self._light_pieces()
 
-    def parse_piece(self, piece: Piece):
-        pass
 
-    def search_piece(self, piece: Piece):
-        pass
-
-    # TODO change logic: print list of pieces and let the user input a number!!!
     def _select_piece(self, pieces: list[Piece]) -> Piece:
         # check if piece is valid try, add the color there
         #Select pieces from list
@@ -71,7 +54,7 @@ class Game:
     def letter_to_int(letter):
         return ord(letter.upper()) - ord('A')
 
-    def place_piece(self, piece: Piece) -> None:
+    def place_piece(self, piece: Piece) -> tuple[int, int]:
         # check if move is legal, if not report to player try again
         # Check if winning
         placed = False
@@ -103,12 +86,49 @@ class Game:
             self.dark_set.remove(piece)
         else:
             self.light_set.remove(piece)
+        return row, col_int
 
+    def _scan_property_column(self, property_line) -> bool:
+        property_line = np.array(property_line)
+        for col in range(4):
+            if np.all(property_line[:,col]) or not np.any(property_line[:,col]):
+                return True
 
+    def _check_win_condition(self, row, col) -> bool:
+        # row
+        row_line = []
+        if None not in self.board[row, :]:
+            for piece in self.board[row, :]:
+                row_line.append(piece.get_properties())
+            if self._scan_property_column(row_line):
+                return True
 
+        # col
+        col_line = []
+        if None not in self.board[:, col]:
+            for piece in self.board[:, col]:
+                col_line.append(piece.get_properties())
+            if self._scan_property_column(col_line):
+                return True
 
+        # main diagonal
+        main_diagonal=[]
+        counter_diagonal=[]
+        if None not in [self.board[i, i] for i in range(4)]:
+            if row == col:
+                for i in range(4):
+                    main_diagonal.append(self.board[i,i].get_properties())
+                if self._scan_property_column(main_diagonal):
+                    return True
 
-        #Also delete piece from list
+        if None not in [self.board[i, 3-i] for i in range(4)]:
+            if row+col == 3:
+                for i in range(4):
+                    counter_diagonal.append(self.board[i, 3-i].get_properties())
+            if self._scan_property_column(counter_diagonal):
+                return True
+        return False
+
 
 
     def player_switch(self, current_player: Player) -> Player | None:
@@ -126,7 +146,7 @@ class Game:
             raise ValueError(f"Player {player.player_name} has no pieces") #this should never happen
 
 
-    def turn(self, player: Player) -> None:
+    def turn(self, player: Player) -> bool:
         print(f"{player.player_name}'s turn")
         print(self.board)
 
@@ -136,17 +156,24 @@ class Game:
         try:
             while on_turn:
                 selected_piece: Piece = self._select_piece(pieces)
-                self.place_piece(selected_piece)
+                row, col = self.place_piece(selected_piece)
+                if self._check_win_condition(row, col):
+                    return True
                 on_turn = False
         except ValueError:
                 print("please enter a valid piece")
+        return False
 
     # starts and runs the actual game
     def run(self):
         game_running: bool = True
         current_player: Player = self.player1
         while game_running:
-            self.turn(current_player)
+            if self.turn(current_player):
+                print(f"{current_player.player_name} won!")
+                print(self.board)
+                game_running = False
+                break
             current_player = self.player_switch(current_player)
 
 
