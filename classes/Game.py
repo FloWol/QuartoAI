@@ -93,13 +93,14 @@ class Game:
         for col in range(4):
             if np.all(property_line[:,col]) or not np.any(property_line[:,col]):
                 return True
+        return False
 
     def _check_win_condition(self, row, col) -> bool:
         # row
         row_line = []
         if None not in self.board[row, :]:
             for piece in self.board[row, :]:
-                row_line.append(piece.get_properties())
+                row_line.append(piece.properties)
             if self._scan_property_column(row_line):
                 return True
 
@@ -107,7 +108,7 @@ class Game:
         col_line = []
         if None not in self.board[:, col]:
             for piece in self.board[:, col]:
-                col_line.append(piece.get_properties())
+                col_line.append(piece.properties)
             if self._scan_property_column(col_line):
                 return True
 
@@ -117,14 +118,14 @@ class Game:
         if None not in [self.board[i, i] for i in range(4)]:
             if row == col:
                 for i in range(4):
-                    main_diagonal.append(self.board[i,i].get_properties())
+                    main_diagonal.append(self.board[i,i].properties)
                 if self._scan_property_column(main_diagonal):
                     return True
 
         if None not in [self.board[i, 3-i] for i in range(4)]:
             if row+col == 3:
                 for i in range(4):
-                    counter_diagonal.append(self.board[i, 3-i].get_properties())
+                    counter_diagonal.append(self.board[i, 3-i].properties)
             if self._scan_property_column(counter_diagonal):
                 return True
         return False

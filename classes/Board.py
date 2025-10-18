@@ -15,7 +15,8 @@ class Board:
         self.board_array[row, col] = value
 
 
-    def __str__(self): #TODO pretty print of the board
+
+    def __str__(self):
         lines = []
         for index, row in enumerate(self.board_array):
             line = ""
